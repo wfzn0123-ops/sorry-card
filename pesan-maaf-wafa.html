@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chat dari Wafa 💬</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap">
+<style>
+:root{
+  --bg:#fef6e9; --in:#ffffff; --out:#ffc2d1; --ink:#3a2530; --muted:#9a7b85; --acc:#ff5d8f; --line:#f1dfd0; --bar:#fffaf2; --card:#fff;
+  box-sizing:border-box; padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#1a1218;--in:#2c1f27;--out:#8c3a58;--ink:#fbeaf0;--muted:#bf9fad;--acc:#ff7aa6;--line:#41303a;--bar:#241a21;--card:#2c1f27;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#1a1218;--in:#2c1f27;--out:#8c3a58;--ink:#fbeaf0;--muted:#bf9fad;--acc:#ff7aa6;--line:#41303a;--bar:#241a21;--card:#2c1f27;color-scheme:dark}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bar);z-index:11}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bar);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:12px}
+.ava{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#ffb86b);display:grid;place-items:center;font-size:22px}
+.nm{font-weight:800;line-height:1.1}
+.st{font-size:.78rem;color:var(--muted)}
+main{max-width:480px;margin:0 auto;padding:18px 14px 150px}
+.day{text-align:center;font-size:.75rem;color:var(--muted);margin:0 0 14px}
+.b{max-width:84%;padding:10px 14px;border-radius:18px;margin:0 0 8px;animation:pop .3s ease both;word-wrap:break-word;overflow-wrap:anywhere}
+.b.in{background:var(--in);border-bottom-left-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.b.out{background:var(--out);margin-left:auto;border-bottom-right-radius:4px}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.typing{display:inline-flex;gap:4px;background:var(--in);padding:13px 16px;border-radius:18px;border-bottom-left-radius:4px;margin-bottom:8px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-4px)}}
+.vc{background:var(--card);border:2px dashed var(--acc);border-radius:18px;padding:14px;margin:4px 0 10px;animation:pop .4s ease both}
+.vc h3{margin:0 0 10px;font-size:.8rem;letter-spacing:.1em;color:var(--acc);text-align:center}
+.vc ul{list-style:none;margin:0;padding:0}
+.vc li{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.vc li:first-child{border-top:0}
+.vc li b{display:block}
+.vc li small{color:var(--muted);display:block;line-height:1.4}
+.vc .em{font-size:1.5rem}
+.stamp{text-align:center;margin-top:8px;font-weight:800;color:var(--acc);font-size:.8rem;transform:rotate(-2deg)}
+#opts{position:fixed;left:0;right:0;bottom:0;background:var(--bar);border-top:1px solid var(--line);padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;justify-content:center;flex-wrap:wrap;transform:translateY(110%);transition:transform .3s}
+#opts.on{transform:none}
+#opts button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:12px 18px;cursor:pointer;background:var(--out);color:var(--ink);flex:1 1 40%;max-width:230px}
+#opts button:active{transform:scale(.96)}
+.sign{text-align:center;color:var(--acc);font-weight:800;margin:16px 0 0}
+.heart{position:fixed;top:-30px;font-size:22px;pointer-events:none;z-index:20;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(40deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){.b,.vc{animation:none}.typing i{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="ava">🚗</div>
+  <div><div class="nm">Wafa Fauzan 💗</div><div class="st" id="st">online</div></div>
+</header>
+<main>
+  <p class="day">Hari ini · pesan penting yang sangat nggak bisa ditunda</p>
+  <div id="chat"></div>
+  <div id="end"></div>
+</main>
+<div id="opts"></div>
+<script>
+(function(){
+var chat=document.getElementById('chat'), opts=document.getElementById('opts'), st=document.getElementById('st'), endEl=document.getElementById('end');
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function down(){endEl.scrollIntoView({behavior:'smooth',block:'end'})}
+function bubble(t,c){var d=document.createElement('div');d.className='b '+c;d.textContent=t;chat.appendChild(d);down();return d}
+async function say(t){
+  st.textContent='sedang mengetik…';
+  var ty=document.createElement('div');ty.className='typing';ty.innerHTML='<i></i><i></i><i></i>';
+  chat.appendChild(ty);down();
+  await wait(Math.min(2600,600+t.length*16));
+  ty.remove();st.textContent='online';
+  bubble(t,'in');await wait(450);
+}
+function hearts(n){
+  var set=['💗','💖','💕','🌷','💌','🚗'];
+  for(var i=0;i<n;i++){(function(i){setTimeout(function(){
+    var h=document.createElement('span');h.className='heart';
+    h.textContent=set[Math.floor(Math.random()*set.length)];
+    h.style.left=Math.random()*100+'vw';h.style.fontSize=(16+Math.random()*22)+'px';
+    h.style.animationDuration=(3+Math.random()*3)+'s';document.body.appendChild(h);
+    setTimeout(function(){h.remove()},6500);
+  },i*90)})(i)}
+}
+function choose(o){
+  return new Promise(function(res){
+    opts.innerHTML='';
+    o.forEach(function(x){
+      var b=document.createElement('button');b.textContent=x.l;
+      b.onclick=async function(){
+        opts.classList.remove('on');
+        bubble(x.l,'out');await wait(500);
+        if(x.h)hearts(45);
+        for(var i=0;i<x.r.length;i++){await say(x.r[i])}
+        res();
+      };
+      opts.appendChild(b);
+    });
+    setTimeout(function(){opts.classList.add('on');down()},300);
+  });
+}
+async function vouchers(){
+  var d=document.createElement('div');d.className='vc';
+  d.innerHTML='<h3>🎫 PAKET PERMINTAAN MAAF RESMI</h3><ul>'+
+  '<li><span class="em">🚗</span><span><b>Voucher Jemput Seumur Hidup</b><small>Berlaku di semua cuaca, termasuk hujan deras. Kecuali Wafa lagi di luar angkasa.</small></span></li>'+
+  '<li><span class="em">⏰</span><span><b>Alarm 3 Lapis</b><small>Sejam, 30 menit, dan 10 menit sebelum jemput. Kalau masih lupa, Wafa pasrah diomelin.</small></span></li>'+
+  '<li><span class="em">🍜</span><span><b>Traktir Makan Pilihan Kamu</b><small>Tanpa jawaban “terserah”. Yang boleh bilang terserah cuma kamu.</small></span></li>'+
+  '<li><span class="em">🤗</span><span><b>Pelukan Hangat 1x</b><small>Bisa diklaim kapan saja, durasi bebas, tanpa syarat dan ketentuan.</small></span></li></ul>'+
+  '<div class="stamp">DISAHKAN OLEH: WAFA FAUZAN, TERSANGKA UTAMA</div>';
+  chat.appendChild(d);down();await wait(900);
+}
+var S=[
+ {m:"Halo, Sayang. Ini Wafa. Jangan di-close dulu ya, tolong 🥺"},
+ {m:"Wafa tahu Wafa salah. Wafa lupa jemput kamu, dan gara-gara itu kita jadi nggak ketemu. Itu bodoh banget, dan Wafa nggak mau nyari pembelaan."},
+ {m:"Tadi Wafa sempat nyusun alasan: “HP mati”, “macet”, “ada alien nyulik”. Tapi semuanya bohong. Jawaban jujurnya cuma satu: Wafa lupa. Dan lupa itu bukan alasan, itu kesalahan."},
+ {c:[{l:"Hmm.",r:["Hmm-nya kamu itu lebih serem dari error merah di layar laptop jam 2 pagi 😭","Tapi Wafa terima. Wafa pantas dapat hmm itu."]},{l:"Terus?",r:["Terus Wafa mau minta maaf dengan benar. Dengerin sampai habis ya, Wafa nggak akan nyela 🙏"]}]},
+ {m:"Yang bikin Wafa nyesel bukan cuma soal jemputannya. Kamu sudah meluangkan waktu, sudah siap-siap, mungkin sudah nungguin, lalu Wafa nggak muncul."},
+ {m:"Wafa bayangin wajah kamu waktu itu, dan hati Wafa langsung kayak laptop kehabisan baterai: mati mendadak, nggak ada tanda-tanda 💔"},
+ {m:"Kamu itu orang yang bikin hari-hari Wafa jadi enak. Kamu sabar, kamu perhatian, dan kamu nggak pernah minta yang aneh-aneh. Kamu cuma minta dijemput, dan Wafa gagal di hal sesederhana itu."},
+ {c:[{l:"Masih kesel sih",r:["Valid banget. Kamu boleh kesel selama yang kamu butuh. Wafa nggak akan nuntut kamu cepat-cepat baikan."]},{l:"Dikit lagi luluh…",r:["DIKIT LAGI?? Wafa sampai tahan napas nih 🫣","Oke Wafa lanjut, biar makin luluh."]}]},
+ {m:"Nah, sebagai bentuk tanggung jawab, Wafa sudah menyiapkan beberapa hal. Resmi, ada stempelnya 😤"},
+ {v:1},
+ {m:"Wafa tahu barang-barang itu nggak bisa ngebayar waktu dan perasaan kamu yang kemarin. Makanya itu bukan pengganti maaf, cuma bukti kalau Wafa serius berubah."},
+ {m:"Satu hal lagi, dan ini yang paling penting. Wafa sayang kamu. Bukan cuma karena kamu pacar Wafa, tapi karena kamu bikin Wafa pengen jadi orang yang lebih baik, lebih tepat waktu, dan lebih bisa dipercaya."},
+ {m:"Maaf ya, Sayang. Sekali lagi, dan sungguh-sungguh 💗"},
+ {m:"Jadi... boleh Wafa jemput kamu lagi? Kali ini nggak telat 🚗"},
+ {c:[{l:"Boleh, jemput aku 💗",h:1,r:["YEAAAY 🥹🥹🥹","Kasih tahu hari dan jamnya ya. Wafa datang 30 menit lebih awal, bawa alarm tiga lapis dan muka paling menyesal.","Makasih sudah ngasih kesempatan. Wafa sayang kamu."]},{l:"Aku butuh waktu",r:["Siap. Ambil waktu kamu, nggak ada paksaan.","Wafa nggak akan neror kamu. Kapan pun kamu siap, kabarin aja, dan Wafa jemput.","Makasih sudah mau baca sampai habis. Itu berarti banget buat Wafa 🤍"]}]}
+];
+async function run(){
+  await wait(700);
+  for(var i=0;i<S.length;i++){
+    var s=S[i];
+    if(s.m){await say(s.m)}
+    else if(s.v){await vouchers()}
+    else if(s.c){await choose(s.c)}
+  }
+  var f=document.createElement('p');f.className='sign';f.textContent='— Wafa Fauzan 💌';chat.appendChild(f);down();
+}
+run();
+})();
+</script>
+</body>
+</html>
